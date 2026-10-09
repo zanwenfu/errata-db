@@ -1,6 +1,6 @@
 # `conversations_subagents` columns
 
-`conversations_subagents/<source>/*.parquet`: the rows of helper agents (subagents) a session started, kept apart from `conversations` as SWE-chat does, one row per piece of a helper's messages, in order. Only Entire's and SWE-chat v2's sessions record them: 91,967 rows in version 2026-10-04, from Claude Code and Copilot CLI.
+`conversations_subagents/<source>/*.parquet`: the rows of helper agents (subagents) a session started, kept apart from `conversations` as SWE-chat does, one row per piece of a helper's messages, in order. Only Entire's and SWE-chat v2's sessions record them: 90,966 rows in version 2026-10-04, from Claude Code and Copilot CLI.
 
 The table has the columns of `conversations` less `queue_op_subtype`, `copy_of` and `pushback` (a helper agent queues no messages, and nobody types to one), with three of its own first. Each row carries its parent session's ids.
 
@@ -9,7 +9,7 @@ The table has the columns of `conversations` less `queue_op_subtype`, `copy_of` 
 | Column | Type | Description | Notes |
 |---|---|---|---|
 | `task_pk` | string | The helper agent's task: `<checkpoint_pk>#<id>`, the id being that of the tool call that started it, else the helper's own id (`sidechain` if it has none). | Without a checkpoint it starts with `<session_key>`; every row in this version has one. |
-| `turn_pk` | string | `<task_pk>#<turn_number>`. | Unique together with `session_key`: 4 helper threads are kept in the files of two sessions of the same checkpoint and appear under both (906 rows). |
+| `turn_pk` | string | `<task_pk>#<turn_number>`. | Unique together with `session_key`: 2 helper threads are kept in the files of two sessions of the same checkpoint and appear under both (6 rows). |
 | `agent_id` | string | The helper agent's own id, as its files give it (Claude Code: `agent-<id>`, its file's name); where they give none, the id of the call that started it, or `sidechain`. |  |
 | `turn_id` | string | `<session_id>#<turn_number>`, numbered within the helper's own rows. | Repeats `turn_id` values of the parent's rows in `conversations`, as in SWE-chat: use `turn_pk`. |
 | `session_id` | string | The parent session's id. |  |
@@ -23,7 +23,7 @@ The table has the columns of `conversations` less `queue_op_subtype`, `copy_of` 
 | `role` | string | SWE-chat's role: `user` (the helper's prompt), `assistant`, `tool_use`, `tool_result`, `metadata`. | Who wrote the row is in `actor`. |
 | `turn_type` | string | SWE-chat's row type. Here: `user_prompt` (the helper's prompt), `assistant_response`, `assistant_thinking`, `tool_use`, `tool_result`, `progress`, `system_event`. |  |
 | `is_conversational` | bool | `true` for prompts and replies (`user_prompt`, `assistant_response`). |  |
-| `content` | text | The row's text, with secrets as `[REDACTED]`. Images and documents appear as `[Image: image/png]`. | A tool's output over 100,000 characters is cut; see `content_truncated`. |
+| `content` | text | The row's text, with secrets as `[REDACTED]`. Images and documents appear as `[Image: image/png]`. | A tool's output over 100,000 characters is cut; see `content_truncated`. Empty on rows with no text: Copilot CLI's progress rows (null), Claude Code's thinking stored hidden and empty tool outputs (an empty string). Test for both. |
 | `model` | string | The model that wrote the row. | Agent rows. |
 | `timestamp` | timestamp | When the log entry was written. | Empty where the format records no time. |
 | `input_tokens` | int | The model call's input tokens. | Once per call, on its first text row (else its first tool call). Anthropic models count without cache reads; OpenAI's (Codex) include cached input. |
@@ -45,9 +45,9 @@ The table has the columns of `conversations` less `queue_op_subtype`, `copy_of` 
 | `bash_category` | string | A shell command's kind: `file ops`, `git`, `package manager`, `test/build`, `other`. | Empty where no command was recorded. |
 | `agent` | string | The coding agent. | Claude Code or Copilot CLI in this version. |
 | `strategy` | string | How Entire saved the parent session. |  |
-| `language` | string | The prompt's language, by SWE-chat: `ENGLISH`, `CHINESE`, ... | Empty except on 46 helper prompts that match a prompt SWE-chat labelled. |
-| `prompt_intent` | string | SWE-chat's label of what a prompt asks: `understand`, `debug`, `create new code`, `refactor`, `test`, `git`, `connect`, `other`. | Written by a model, for SWE-chat. Empty except on 44 helper prompts that match a prompt SWE-chat labelled. |
-| `prompt_pushback` | string | SWE-chat's pushback label: `correction`, `rejection`, `failure_report`, `non_pushback`. | Written by a model, for SWE-chat. Empty except on 44 helper prompts that match a prompt SWE-chat labelled. |
+| `language` | string | The prompt's language, by SWE-chat: `ENGLISH`, `CHINESE`, ... | Empty except on 42 helper prompts that match a prompt SWE-chat labelled. |
+| `prompt_intent` | string | SWE-chat's label of what a prompt asks: `understand`, `debug`, `create new code`, `refactor`, `test`, `git`, `connect`, `other`. | Written by a model, for SWE-chat. Empty except on 40 helper prompts that match a prompt SWE-chat labelled. |
+| `prompt_pushback` | string | SWE-chat's pushback label: `correction`, `rejection`, `failure_report`, `non_pushback`. | Written by a model, for SWE-chat. Empty except on 40 helper prompts that match a prompt SWE-chat labelled. |
 | `source` | string | `entire` or `swe-chat-v2`: the sources whose sessions record helper agents. |  |
 | `session_key` | string | The parent session's `<source>:<source_id>`. | Links the row to the session tables and to the parent's rows in `conversations`. |
 | `typed_by_developer` | bool | Always `false`: nobody types to a helper agent. | Its prompt is written by the parent agent. |
