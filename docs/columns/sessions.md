@@ -21,8 +21,8 @@
 | `repo` | string | The GitHub repository, as `owner/name`. | Empty for DataClaw and OpenHands. |
 | `repo_url` | string | The repository's URL. | Empty for DataClaw and OpenHands. |
 | `repo_license` | string | GitHub's reading of the repository's licence: an SPDX id, `none` (no licence file) or `unrecognized`. | Empty for DataClaw and OpenHands, which record no repository. |
-| `repo_language` | string | GitHub's main language of the repository. | Empty for DataClaw and OpenHands, and where GitHub names none (14% of Entire's kept sessions). |
-| `agent` | string | The coding agent. | Empty where the files do not name it: 47% of SpecStory's kept sessions, 19% of DataClaw's. |
+| `repo_language` | string | GitHub's main language of the repository. | Empty for DataClaw and OpenHands, and where GitHub names none (13% of Entire's kept sessions). |
+| `agent` | string | The coding agent. | Empty where the files do not name it: 46% of SpecStory's kept sessions, 19% of DataClaw's. |
 | `agent_version` | string | The agent's version. | Not recorded for DataClaw, OpenHands feedback or SpecStory. |
 | `models` | list of strings | The models the session used. |  |
 | `started_at` | string | The first message's time (ISO 8601, UTC). | Empty where the files record no time with a time zone: every Aider session, and 31% of SpecStory's kept sessions; a time without a zone is kept in `source_facts`. |

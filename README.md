@@ -2,24 +2,58 @@
 
 Real sessions between developers and AI coding agents, from six public sources, in one dataset.
 
-**Data:** Duke CS cluster, `/usr/xtmp/zf93/errata-data/2026-10-04` · [Get the data](#get-the-data) ·
-[Columns](#column-reference)
+**Data:** Duke CS cluster, `/usr/xtmp/zf93/errata-data/2026-10-11` (the newest version) ·
+[Versions](#versions) · [Get the data](#get-the-data) · [Columns](#column-reference)
 
-> **Status.** Version `2026-10-04` is on Duke Computer Science's cluster, in temporary storage. Use it for
-> research only, and do not try to identify the people in these sessions.
->
-> **Corrected on 2026-10-06, 2026-10-07 and 2026-10-09**, in place (same folder, same name): `typed_by_developer`
-> now marks every message a person may have written, and no longer the text of tools, buttons or other programs
-> where the format tells them apart; the `redactions` counts are exact; a conversation saved twice is kept once;
-> names the secret scanner had taken for keys are shown again; 314 messages a program wrote have their full text
-> back, and SWE-chat's labels sit on the messages they were given to. If you
-> copied the data before, check your copy against the new checksum file; `changelog.json` (`corrected`) lists
-> every change.
+> **Status.** A new version is added each week, beside the ones before, on Duke Computer Science's cluster in
+> temporary storage. The newest is `2026-10-11`. Use it for research only, and do not try to identify the people in
+> these sessions.
+
+## Versions
+
+Use the newest folder. Each folder is a complete dataset on its own: a file a week did not change is the same file
+as the week before's, so it takes no extra space. Older folders stay as they were published, for anyone
+reproducing a result.
+
+| Version | Published | Sessions kept | New sessions | Updated sessions | Typed messages | Pushback | Size |
+|---|---|---|---|---|---|---|---|
+| `2026-10-11` | 2026-10-12 | 60,214 | 3,460 | 1,201 | 460,133 | 137,727 | 79.8 GB |
+| `2026-10-04` | 2026-10-06 | 57,786 | the first version | – | 435,878 | 131,590 | 77.0 GB |
+
+<details>
+<summary><b>2026-10-11</b>: what changed</summary>
+
+- 3,460 sessions are new: Entire 2,557, SpecStory 177 and Aider 134 are kept; the other 592 repeat sessions already
+  in the dataset.
+- 1,201 sessions were updated: read again because their source changed (new checkpoints, repository details).
+  None lost a message.
+- 506 SWE-chat v2 sessions are now kept from their Entire copy, which holds the same messages; SWE-chat's labels
+  moved with them.
+- The three copied datasets had nothing new.
+- **Corrected on 2026-10-12**, in place: 396 messages that other agents or programs sent into a session (an
+  orchestrator's messages, notices and task briefs to its workers, a team tool's reports, answers picked in a dialog)
+  are no longer marked typed, and 516 duplicate sessions got the counts they lacked. `changelog.json` (`corrected`)
+  lists every change.
+
+</details>
+
+<details>
+<summary><b>2026-10-04</b>: the first version</summary>
+
+- **Corrected on 2026-10-06, 2026-10-07 and 2026-10-09**, in place: `typed_by_developer` now marks every message a
+  person may have written, and no longer the text of tools, buttons or other programs where the format tells them
+  apart; the `redactions` counts are exact; a conversation saved twice is kept once; names the secret scanner had
+  taken for keys are shown again; 314 messages a program wrote have their full text back, and SWE-chat's labels sit
+  on the messages they were given to. `changelog.json` (`corrected`) lists every change.
+
+</details>
+
+If you copied a version before it was corrected, check your copy against its checksum file.
 
 ## Overview
 
-Version `2026-10-04` holds 57,786 sessions from 28 coding agents, started between November 2023 and October 2026.
-They make 18.4 million rows, plus 91 thousand from helper agents the sessions started. Secrets are masked.
+Version `2026-10-11` holds 60,214 sessions from 32 coding agents, started between November 2023 and October 2026.
+They make 19.4 million rows, plus 150 thousand from helper agents the sessions started. Secrets are masked.
 
 Each row says who produced it and whether a person typed it. Most labels come from the agents' own records or
 from fixed rules. One, `pushback`, comes from a model we ran; SWE-chat v2's own labels are copied as they are. We
@@ -31,13 +65,15 @@ The data is on Duke Computer Science's cluster:
 
 ```
 /usr/xtmp/zf93/errata-data/
-├── 2026-10-04/                       77.0 GB, 22,319 files
+├── 2026-10-11/                       the newest version: 79.8 GB, 22,446 files
 │   ├── changelog.json                counts, the copied datasets' sources and licences, how pushback was labelled
 │   ├── data/<source>/*.parquet       one row per session, one folder per source
 │   ├── conversations/<source>/*.parquet
 │   ├── conversations_subagents/<source>/*.parquet
 │   └── copied/                       the copied datasets' own files, as released
-└── errata-data-2026-10-04.sha256     a checksum for every file
+├── errata-data-2026-10-11.sha256     a checksum for every file of 2026-10-11
+├── 2026-10-04/                       the version before, laid out the same way
+└── errata-data-2026-10-04.sha256
 ```
 
 Anyone with a Duke CS account can read it. Questions and removal requests go to its maintainer (NetID
@@ -54,7 +90,7 @@ import duckdb
 
 duckdb.sql("""
     SELECT agent, count(*) AS typed_messages, round(avg(pushback::int), 3) AS pushback_share
-    FROM '/usr/xtmp/zf93/errata-data/2026-10-04/conversations/*/*.parquet'
+    FROM '/usr/xtmp/zf93/errata-data/2026-10-11/conversations/*/*.parquet'
     WHERE typed_by_developer AND copy_of IS NULL
     GROUP BY agent ORDER BY typed_messages DESC
 """).show()
@@ -62,38 +98,38 @@ duckdb.sql("""
 
 **To copy all of it**, use Globus, Duke CS's recommended way to move large data. In the Globus file manager
 (app.globus.org), open the collection "Duke Compsci XTMP" at the path `/zf93/errata-data/`, and transfer
-`2026-10-04` and the checksum file to your own collection.
+`2026-10-11` and its checksum file to your own collection.
 
 **To copy a part**, use rsync through the login server, with your NetID in place of `<netid>`. For example, the
-conversations tables (5.8 GB):
+conversations tables (6.2 GB):
 
 ```bash
-rsync -a --info=progress2 <netid>@login.cs.duke.edu:/usr/xtmp/zf93/errata-data/2026-10-04/conversations ./2026-10-04/
+rsync -a --info=progress2 <netid>@login.cs.duke.edu:/usr/xtmp/zf93/errata-data/2026-10-11/conversations ./2026-10-11/
 ```
 
-**To check a full copy**, run this in the folder that holds `2026-10-04` and the checksum file:
+**To check a full copy**, run this in the folder that holds `2026-10-11` and its checksum file:
 
 ```bash
-sha256sum -c --quiet errata-data-2026-10-04.sha256
+sha256sum -c --quiet errata-data-2026-10-11.sha256
 ```
 
 ## What's in the dataset
 
 | Table | One row is | Rows |
 |---|---|---|
-| `entire`, `specstory`, `aider`, `swe-chat-v2`, `dataclaw`, `openhands-feedback` | a session, with its raw files (the copied datasets' are in `copied/`) | 80,471 |
-| `conversations` | one piece of a message: text, reasoning, a tool call, a tool's output, a notice | 18,438,155 |
-| `conversations_subagents` | the same, for helper agents a session started | 90,966 |
+| `entire`, `specstory`, `aider`, `swe-chat-v2`, `dataclaw`, `openhands-feedback` | a session, with its raw files (the copied datasets' are in `copied/`) | 83,931 |
+| `conversations` | one piece of a message: text, reasoning, a tool call, a tool's output, a notice | 19,379,785 |
+| `conversations_subagents` | the same, for helper agents a session started | 150,027 |
 
-The six session tables are the six sources:
+The six session tables are the six sources (version `2026-10-11`):
 
 | Source | Sessions kept | What it is |
 |---|---|---|
-| Entire | 24,080 | the agent's own log, saved by the Entire CLI in public GitHub repositories |
-| SpecStory | 14,775 | chat histories the SpecStory editor extension saves as Markdown, committed to GitHub |
+| Entire | 26,699 | the agent's own log, saved by the Entire CLI in public GitHub repositories |
+| SpecStory | 14,956 | chat histories the SpecStory editor extension saves as Markdown, committed to GitHub |
 | DataClaw | 8,369 | session exports developers uploaded to Hugging Face, copied as released |
-| Aider | 5,801 | Aider's chat-history files committed to GitHub; 92% are one repository's benchmark runs |
-| SWE-chat v2 | 4,532 | SALT-NLP's public dataset; its other 13,436 sessions are copies of Entire's or of its own, kept once |
+| Aider | 5,935 | Aider's chat-history files committed to GitHub; 90% are one repository's benchmark runs |
+| SWE-chat v2 | 4,026 | SALT-NLP's public dataset; its other 13,942 sessions are copies of Entire's or of its own, kept once |
 | OpenHands feedback | 229 | OpenHands' public dataset of user sessions with feedback |
 
 A session found in several places is kept once, and so is a conversation saved twice (an earlier save of a longer
@@ -105,7 +141,7 @@ set, and they have no rows.
 | Column | Meaning | Empty (null) on |
 |---|---|---|
 | `session_key`, `turn_number` | The session, and the row's position in it. | no row |
-| `agent` | The coding agent. | rows whose source does not name it: 16% of SpecStory's, 11% of DataClaw's |
+| `agent` | The coding agent. | rows whose source does not name it: 15% of SpecStory's, 11% of DataClaw's |
 | `kind` | What the row is: `text`, `thinking`, `tool_call`, `tool_result`, `notice`, `command`, `queued`, ... | no row |
 | `actor` | Who made it: `developer`, `agent`, `tool`, `harness` (the agent program's own text) or `peer`. | no row |
 | `typed_by_developer` | `true` if a person may have typed the message: every message a person wrote is marked, and where the format records no author, some a program wrote are too. | no row |
@@ -113,9 +149,9 @@ set, and they have no rows.
 | `content` | The text, with secrets replaced by `[REDACTED]`. | rows with no text: progress and snapshot rows, queue bookkeeping, most notices, reasoning stored hidden, empty tool outputs. Some hold an empty string instead of null, so test for both |
 | `tool_name`, `command`, `file_path` | What the agent ran, and on what. | rows that are not tool calls or outputs; `command` is only on shell calls (and on commands a developer entered), `file_path` only on calls that name a file |
 | `category`, `bash_category` | The kind of tool call (`Action`, `Research`, ...) and of shell command (`git`, `test/build`, ...). | rows that are not tool calls or outputs; `bash_category` also on other tools than the shell |
-| `is_error` | The tool reported a failure. | every row but tool outputs (and 401 status notices), and the 19% of outputs whose format records no failure |
+| `is_error` | The tool reported a failure. | every row but tool outputs (and 476 status notices), and the 19% of outputs whose format records no failure |
 | `model`, `input_tokens`, `output_tokens` | The model, and its token counts for each call. | rows the agent did not write. `model` is missing from all of Aider and OpenHands feedback; the counts are on one row per call, and missing from all of Aider, SpecStory and OpenHands feedback |
-| `pushback` | `true` if a typed message pushes back on the agent's work. Written by our model. | every row not typed, and 1,785 typed rows ([below](#labels-rules-and-a-model)) |
+| `pushback` | `true` if a typed message pushes back on the agent's work. Written by our model. | every row not typed, and 1,794 typed rows ([below](#labels-rules-and-a-model)) |
 | `prompt_intent`, `prompt_pushback`, `language` | SWE-chat v2's own labels of its prompts, copied as they are. | every row but the prompts SWE-chat v2 labelled, which are only in the `swe-chat-v2` and `entire` folders |
 
 A column that does not apply to a row is empty there. The [column reference](#column-reference) says, for every
@@ -147,8 +183,8 @@ the message typed. A turn SpecStory's export kept without its content (pasted ou
 with no text.
 
 `pushback` is the one label we had a model write. gpt-6-luna read each typed message on its own, without the rest
-of the session, and answered yes or no. Of 435,878 typed rows, it marked 131,590 as pushback. 1,785 have no label:
-Azure's content filter refused 49, and 1,736 hold no text. The instructions the model got are in the version's
+of the session, and answered yes or no. Of version `2026-10-11`'s 460,133 typed rows, it marked 137,727 as pushback.
+1,794 have no label: Azure's content filter refused 54, and 1,740 hold no text. The instructions the model got are in the version's
 `changelog.json` (`pushback_labels`).
 
 SWE-chat v2's authors labelled its prompts with their own model: `prompt_intent`, `prompt_pushback` and
@@ -159,7 +195,8 @@ other row, and so is `pushback` on every row not typed.
 
 ## How accurate the labels are
 
-We drew a random sample of 1,098 rows and compared the dataset's labels with what two readers saw in each row.
+We drew a random sample of 1,098 rows of version `2026-10-04` and compared the dataset's labels with what two
+readers saw in each row.
 Both readers were Claude models working from one written guide, not people. Each typed message they disagreed
 with the dataset on was checked against the session's raw file. Where the readers differ, both results are shown.
 
@@ -179,14 +216,17 @@ The two readers agreed on every typed message both could decide (526 of 526).
 - `typed_by_developer` errs toward marking: where a format records no author, some messages a program wrote are
   marked typed, most of them in DataClaw, where helper agents' task briefs read as typed.
 - `pushback` is one model's reading of one message without its context; use it to find candidates, not as truth.
-- Sources are lopsided: 92% of Aider's sessions are one benchmark script, and one repository is 12% of Entire.
+- Sources are lopsided: 90% of Aider's sessions are one benchmark script, and one repository is 11% of Entire.
 - Masking catches most secrets, not every one: a password written out in a message is not caught. The
   `redactions` column counts what was masked in each session.
 - The secret scanner also takes ordinary names for keys (a dtype, model and class names, settings' names, paths).
   306 such texts are shown again: none has the shape of a key, and each is mostly dictionary words or appears
   unmasked elsewhere in the dataset at least as often as it was masked. A name that has the shape of a key stays
   masked.
-- 1,734 SpecStory turns hold no text: the export kept the turn but not what the person sent.
+- 1,738 SpecStory turns hold no text: the export kept the turn but not what the person sent.
+- SWE-chat v2's own labels sit on 65% of the prompts it labelled (measured on version `2026-10-04`). It labels
+  each block of a prompt on its own, blocks a tool inserted included (environment details, instruction files,
+  referenced files' contents), and this dataset keeps those inside the message or as a notice of their own.
 - Only public logs on default branches are found; private and branch-only sessions are missing.
 
 ## Column reference
