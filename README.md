@@ -30,36 +30,8 @@ reproducing a result.
 - 506 SWE-chat v2 sessions are now kept from their Entire copy, which holds the same messages; SWE-chat's labels
   moved with them.
 - The three copied datasets had nothing new.
-- **Corrected on 2026-10-12**, in place: 396 messages that other agents or programs sent into a session (an
-  orchestrator's messages, notices and task briefs to its workers, a team tool's reports, answers picked in a dialog)
-  are no longer marked typed, and 516 duplicate sessions got the counts they lacked.
-- **Corrected again on 2026-10-12 (evening)**, in place: a note a tool puts in front of a Claude Code message
-  (`Message sent at …`, the references attached, a linked session's status) had made the developer's words after it
-  the tool's. 119 more of the developer's messages are now typed, and a few notices and briefs from other programs no
-  longer are; queued messages from other agents or sessions now name them (`actor` = `peer`); 5,427 more of SWE-chat
-  v2's labels sit on the messages they were given to.
-- **Corrected a third time on 2026-10-12 (night)**, in place: 13 `/goal` commands a developer typed while the agent
-  worked are counted again (Claude Code records such a command only as a queued `Goal set: …`, which the evening's
-  correction had counted as no one's). In DataClaw's and SpecStory's copies, which keep no mark of who wrote a
-  message, 37 notes Claude Code writes when a goal is set (where the goal's command is recorded beside them) and 2
-  repeated deliveries of one goal are no longer typed: a `/goal` had counted two or three times. 26 queued messages in 2 DataClaw sessions that hold Claude Code
-  transcripts now name the other session that sent them (`actor` = `peer`). `changelog.json` (`corrected`) lists
-  every change.
 
 </details>
-
-<details>
-<summary><b>2026-10-04</b>: the first version</summary>
-
-- **Corrected on 2026-10-06, 2026-10-07 and 2026-10-09**, in place: `typed_by_developer` now marks every message a
-  person may have written, and no longer the text of tools, buttons or other programs where the format tells them
-  apart; the `redactions` counts are exact; a conversation saved twice is kept once; names the secret scanner had
-  taken for keys are shown again; 314 messages a program wrote have their full text back, and SWE-chat's labels sit
-  on the messages they were given to. `changelog.json` (`corrected`) lists every change.
-
-</details>
-
-If you copied a version before it was corrected, check your copy against its checksum file.
 
 ## Overview
 
