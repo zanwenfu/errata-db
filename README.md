@@ -17,7 +17,7 @@ reproducing a result.
 
 | Version | Published | Sessions kept | New sessions | Updated sessions | Typed messages | Pushback | Size |
 |---|---|---|---|---|---|---|---|
-| `2026-10-11` | 2026-10-12 | 60,214 | 3,460 | 1,201 | 460,133 | 137,727 | 79.8 GB |
+| `2026-10-11` | 2026-10-12 | 60,214 | 3,460 | 1,201 | 460,302 | 137,766 | 79.8 GB |
 | `2026-10-04` | 2026-10-06 | 57,786 | the first version | – | 435,878 | 131,590 | 77.0 GB |
 
 <details>
@@ -32,8 +32,19 @@ reproducing a result.
 - The three copied datasets had nothing new.
 - **Corrected on 2026-10-12**, in place: 396 messages that other agents or programs sent into a session (an
   orchestrator's messages, notices and task briefs to its workers, a team tool's reports, answers picked in a dialog)
-  are no longer marked typed, and 516 duplicate sessions got the counts they lacked. `changelog.json` (`corrected`)
-  lists every change.
+  are no longer marked typed, and 516 duplicate sessions got the counts they lacked.
+- **Corrected again on 2026-10-12 (evening)**, in place: a note a tool puts in front of a Claude Code message
+  (`Message sent at …`, the references attached, a linked session's status) had made the developer's words after it
+  the tool's. 119 more of the developer's messages are now typed, and a few notices and briefs from other programs no
+  longer are; queued messages from other agents or sessions now name them (`actor` = `peer`); 5,427 more of SWE-chat
+  v2's labels sit on the messages they were given to.
+- **Corrected a third time on 2026-10-12 (night)**, in place: 13 `/goal` commands a developer typed while the agent
+  worked are counted again (Claude Code records such a command only as a queued `Goal set: …`, which the evening's
+  correction had counted as no one's). In DataClaw's and SpecStory's copies, which keep no mark of who wrote a
+  message, 37 notes Claude Code writes when a goal is set (where the goal's command is recorded beside them) and 2
+  repeated deliveries of one goal are no longer typed: a `/goal` had counted two or three times. 26 queued messages in 2 DataClaw sessions that hold Claude Code
+  transcripts now name the other session that sent them (`actor` = `peer`). `changelog.json` (`corrected`) lists
+  every change.
 
 </details>
 
@@ -183,13 +194,15 @@ the message typed. A turn SpecStory's export kept without its content (pasted ou
 with no text.
 
 `pushback` is the one label we had a model write. gpt-6-luna read each typed message on its own, without the rest
-of the session, and answered yes or no. Of version `2026-10-11`'s 460,133 typed rows, it marked 137,727 as pushback.
+of the session, and answered yes or no. Of version `2026-10-11`'s 460,302 typed rows, it marked 137,766 as pushback.
 1,794 have no label: Azure's content filter refused 54, and 1,740 hold no text. The instructions the model got are in the version's
 `changelog.json` (`pushback_labels`).
 
 SWE-chat v2's authors labelled its prompts with their own model: `prompt_intent`, `prompt_pushback` and
 `language`. We copy those values unchanged onto the same messages, for the sessions SWE-chat v2 holds (in the
-`swe-chat-v2` and `entire` folders), and label nothing in these columns ourselves. Our `pushback` is separate: it
+`swe-chat-v2` and `entire` folders), and label nothing in these columns ourselves. In a Claude Code session they
+can sit on a queued message's row (`queue_operation`) or an entry Claude Code marks as its own (`system_injected`),
+which SWE-chat files as prompts. Our `pushback` is separate: it
 covers the typed messages of every source, SWE-chat's included. SWE-chat's three columns are empty on every
 other row, and so is `pushback` on every row not typed.
 
