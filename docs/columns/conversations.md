@@ -57,6 +57,6 @@ The first 38 columns follow SWE-chat v2's `conversations` table, in its order, s
 | `content_truncated` | bool | `true` if a tool's output was cut at 100,000 characters. | Set on tool outputs only; empty elsewhere. The whole output is in the session's `files`. |
 | `raw_file` | string | The file in the session's `files` the row came from. |  |
 | `raw_line` | int | The row's line in that file. | Empty where the file is one JSON document rather than a line per entry: OpenCode's sessions and Gemini CLI's JSON files. |
-| `pushback` | bool | `true` if a typed message pushes back on the agent's work: corrects or redirects it, rejects or reverts it, or reports it broken. | Written by gpt-6-luna from the message alone. Typed rows only, empty on every other row; 1,794 typed rows have no label: 54 the model's content filter held back, 1,740 with no text to read. |
+| `pushback` | bool | `true` if a typed message pushes back on the agent's work: corrects or redirects it, rejects or reverts it, or reports it broken. | Written by gpt-6-luna from the message alone. Typed rows only, empty on every other row; 1,794 typed rows have no label: 1,740 with no text to read, 54 the model's content filter held back. |
 
 Other tables: [session tables](sessions.md), [`conversations_subagents`](conversations_subagents.md). The [README](../../README.md) says where the data is and how to get it.

@@ -17,7 +17,7 @@ reproducing a result.
 
 | Version | Published | Sessions kept | New sessions | Updated sessions | Typed messages | Pushback | Size |
 |---|---|---|---|---|---|---|---|
-| `2026-10-11` | 2026-10-12 | 60,214 | 3,460 | 1,201 | 460,302 | 137,766 | 79.8 GB |
+| `2026-10-11` | 2026-10-12 | 60,207 | 3,460 | 1,201 | 461,202 | 138,123 | 79.8 GB |
 | `2026-10-04` | 2026-10-06 | 57,786 | the first version | – | 435,878 | 131,590 | 77.0 GB |
 
 <details>
@@ -35,7 +35,9 @@ reproducing a result.
 
 ## Overview
 
-Version `2026-10-11` holds 60,214 sessions from 32 coding agents, started between November 2023 and October 2026.
+Version `2026-10-11` holds 60,207 sessions, started between November 2023 and October 2026. Their logs name 32
+coding agents: Claude Code and Codex hold 55% of the sessions, and a few names are one product under several
+names (GitHub Copilot has three).
 They make 19.4 million rows, plus 150 thousand from helper agents the sessions started. Secrets are masked.
 
 Each row says who produced it and whether a person typed it. Most labels come from the agents' own records or
@@ -101,19 +103,19 @@ sha256sum -c --quiet errata-data-2026-10-11.sha256
 | Table | One row is | Rows |
 |---|---|---|
 | `entire`, `specstory`, `aider`, `swe-chat-v2`, `dataclaw`, `openhands-feedback` | a session, with its raw files (the copied datasets' are in `copied/`) | 83,931 |
-| `conversations` | one piece of a message: text, reasoning, a tool call, a tool's output, a notice | 19,379,785 |
+| `conversations` | one piece of a message: text, reasoning, a tool call, a tool's output, a notice | 19,376,786 |
 | `conversations_subagents` | the same, for helper agents a session started | 150,027 |
 
 The six session tables are the six sources (version `2026-10-11`):
 
 | Source | Sessions kept | What it is |
 |---|---|---|
-| Entire | 26,699 | the agent's own log, saved by the Entire CLI in public GitHub repositories |
-| SpecStory | 14,956 | chat histories the SpecStory editor extension saves as Markdown, committed to GitHub |
-| DataClaw | 8,369 | session exports developers uploaded to Hugging Face, copied as released |
-| Aider | 5,935 | Aider's chat-history files committed to GitHub; 90% are one repository's benchmark runs |
-| SWE-chat v2 | 4,026 | SALT-NLP's public dataset; its other 13,942 sessions are copies of Entire's or of its own, kept once |
-| OpenHands feedback | 229 | OpenHands' public dataset of user sessions with feedback |
+| [Entire](https://github.com/entireio/cli) | 26,692 | the agent's own log, saved by the Entire CLI in public GitHub repositories |
+| [SpecStory](https://specstory.com) | 14,956 | chat histories the SpecStory editor extension saves as Markdown, committed to GitHub |
+| [DataClaw](https://huggingface.co/datasets?other=dataclaw) | 8,369 | session exports developers uploaded to Hugging Face, copied as released |
+| [Aider](https://aider.chat) | 5,935 | Aider's chat-history files committed to GitHub; 90% are one repository's benchmark runs |
+| [SWE-chat v2](https://huggingface.co/datasets/SALT-NLP/SWE-chat) | 4,026 | SALT-NLP's public dataset; its other 13,942 sessions are copies of Entire's or of its own, kept once |
+| [OpenHands feedback](https://huggingface.co/datasets/OpenHands/openhands-feedback) | 229 | OpenHands' public dataset of user sessions with feedback |
 
 A session found in several places is kept once, and so is a conversation saved twice (an earlier save of a longer
 chat, an export copied again): the fullest copy is kept. The others stay in the session tables with `duplicate_of`
@@ -166,8 +168,8 @@ the message typed. A turn SpecStory's export kept without its content (pasted ou
 with no text.
 
 `pushback` is the one label we had a model write. gpt-6-luna read each typed message on its own, without the rest
-of the session, and answered yes or no. Of version `2026-10-11`'s 460,302 typed rows, it marked 137,766 as pushback.
-1,794 have no label: Azure's content filter refused 54, and 1,740 hold no text. The instructions the model got are in the version's
+of the session, and answered yes or no. Of version `2026-10-11`'s 461,202 typed rows, it marked 138,123 as pushback.
+1,794 have no label: 1,740 hold no text, and Azure's content filter refused 54. The instructions the model got are in the version's
 `changelog.json` (`pushback_labels`).
 
 SWE-chat v2's authors labelled its prompts with their own model: `prompt_intent`, `prompt_pushback` and
@@ -180,21 +182,24 @@ other row, and so is `pushback` on every row not typed.
 
 ## How accurate the labels are
 
-We drew a random sample of 1,098 rows of version `2026-10-04` and compared the dataset's labels with what two
-readers saw in each row.
-Both readers were Claude models working from one written guide, not people. Each typed message they disagreed
-with the dataset on was checked against the session's raw file. Where the readers differ, both results are shown.
+We drew a random sample of 1,005 rows of version `2026-10-11`, as corrected on 2026-10-13, and compared the
+dataset's labels with what two readers saw in each row.
+Both readers were Claude models (two different ones) working from one written guide, not people. Every typed
+message a reader disagreed with the dataset on was checked against the session's raw file, and the table gives the
+result of that check. Where the readers differ, both results are shown.
 
 | What was checked | Sample | Result |
 |---|---|---|
-| A message a person wrote that is not marked typed | 278 user rows not marked typed | 1, in a Codex helper thread; that rule was fixed and the data corrected |
-| A row marked typed that a program wrote | 300 rows marked typed | 1–3% overall; DataClaw 8–21%, every other source under 5% |
-| `pushback` | 200 typed messages | agrees with the readers on 88%; the readers agree with each other on 94% |
-| A near-copy: the same conversation saved twice | 100 pairs | 100 of 100 |
-| A row's `kind` and `actor` | 120 rows | 117–119 of 120 |
+| A message a person wrote that is not marked typed | 278 user rows not marked typed | none |
+| A row marked typed that a program wrote | 300 rows marked typed, 50 per source | 0.5% overall: 3 of Aider's 50, 2 of DataClaw's, 1 of OpenHands feedback's, none of the others' |
+| `pushback` | 200 typed messages | agrees with the readers on 90–91%; the readers agree with each other on 97% |
+| A near-copy: the same conversation saved twice | the 7 sessions that became near-copies on 2026-10-13 (100 pairs of version `2026-10-04`) | 7 of 7 (100 of 100) |
+| A row's `kind` and `actor` | 120 rows | 110–113 of 120 |
 | An unmasked string that looks like a key | 100 strings | none is a working secret |
 
-The two readers agreed on every typed message both could decide (526 of 526).
+The readers agreed on 497 of the 539 typed messages both could decide. Checked against the raw files, the dataset
+was wrong on the 6 rows above and right on every other message a reader disputed: most were a benchmark script's
+prompts and a person's terminal commands, which the guide does not count as messages to the agent.
 
 ## Limitations
 
@@ -208,7 +213,11 @@ The two readers agreed on every typed message both could decide (526 of 526).
   306 such texts are shown again: none has the shape of a key, and each is mostly dictionary words or appears
   unmasked elsewhere in the dataset at least as often as it was masked. A name that has the shape of a key stays
   masked.
-- 1,738 SpecStory turns hold no text: the export kept the turn but not what the person sent.
+- 1,738 SpecStory turns hold no text: the export kept the turn but not what the person sent. SpecStory also
+  writes a tool's call and its output as one block, so a `tool_call` row from it can hold the output too.
+- Two sessions stay as published where the near-copy rule would now change them: one is kept although it is an
+  earlier save of another session (it holds a helper agent's thread the fuller save lacks), and one is still a
+  duplicate although it is a conversation of its own (its files were never published).
 - SWE-chat v2's own labels sit on 65% of the prompts it labelled (measured on version `2026-10-04`). It labels
   each block of a prompt on its own, blocks a tool inserted included (environment details, instruction files,
   referenced files' contents), and this dataset keeps those inside the message or as a notice of their own.
