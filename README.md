@@ -215,9 +215,6 @@ prompts and a person's terminal commands, which the guide does not count as mess
   masked.
 - 1,738 SpecStory turns hold no text: the export kept the turn but not what the person sent. SpecStory also
   writes a tool's call and its output as one block, so a `tool_call` row from it can hold the output too.
-- Two sessions stay as published where the near-copy rule would now change them: one is kept although it is an
-  earlier save of another session (it holds a helper agent's thread the fuller save lacks), and one is still a
-  duplicate although it is a conversation of its own (its files were never published).
 - SWE-chat v2's own labels sit on 65% of the prompts it labelled (measured on version `2026-10-04`). It labels
   each block of a prompt on its own, blocks a tool inserted included (environment details, instruction files,
   referenced files' contents), and this dataset keeps those inside the message or as a notice of their own.
